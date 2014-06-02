@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>News</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+
+	    <% @news.each do |news|  %>
+	
+	      <article class="panel">
+	        <h3><%= news.title %> <small>written by <%= news.user.name %> on <%= news.created_at.strftime('%d %b %Y') %></small></h3>
+	        <p><%= news.text %></p>
+	      </article>
+	
+	    <% end %>
+    
+  </div>
+</div>

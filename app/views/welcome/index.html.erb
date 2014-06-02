@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>Project Watchlist <small>The MVWebapplication</small></h1>
+  </div>
+</div>
+
+<% if !@entries.nil? %>
+
+    <div class="row">
+      <div class="medium-10 medium-centered columns">
+        <%= month_calendar table: {class: "calendar"} do |date| %>
+            <%= date.day %>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="medium-10 medium-centered columns">
+        <%= link_to 'Add TV show', new_user_entry_path(:user_id => current_user), :class => 'button tiny expand' %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="medium-10 medium-centered columns">
+        <table class="serieslist">
+          <thead>
+          <tr>
+            <th>Series Title</th>
+            <th>Last Episode</th>
+            <th>Last Season</th>
+            <th>Weekday</th>
+            <th>Rating</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @entries.each do |entry| %>
+              <tr>
+                <td><%= link_to entry.title, url_with_protocol(entry.link), :target => '_blank' %></td>
+                <td><%= entry.lastepisode %> <%= link_to '+', {:controller => 'entries' , :action => 'episode_up', :entry_id => entry.id} %>|
+                  <%= link_to '-', {:controller => 'entries' , :action => 'episode_down', :entry_id => entry.id} %></td>
+                <td><%= entry.lastseason %>  <%= link_to '+', {:controller => 'entries' , :action => 'season_up', :entry_id => entry.id} %>|
+                  <%= link_to '-', {:controller => 'entries' , :action => 'season_down', :entry_id => entry.id} %></td>
+                <td><%= entry.releaseday %></td>
+                <td><%= entry.rating %></td>
+                <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
+                <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete, data: { confirm: "Are you sure to delete this entry?" } %></td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+
+
+<% else %>
+
+    <div class="row">
+      <div class="medium-10 medium-centered columns">
+        <h2>An error occured. This user has no list.</h2>
+      </div>
+    </div>
+
+<% end %>
+
+
+

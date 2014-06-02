@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>New entry for your list</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    
+    <%= form_for @series do |form| %>
+
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+        
+        <div class="row">
+  			<div class="medium-4 medium-centered columns">
+  				<%= form.submit 'Search TV Show', :class => 'button expand' %>	
+  			</div>
+		</div>
+
+    <% end %>
+    
+  </div>
+</div>

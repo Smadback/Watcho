@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>Edit a series entry</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <%= form_for ([current_user, @entry]) do |form| %>
+
+        <%= form.label :title %>
+        <%= form.text_field :title %>
+
+        <%= form.label :releaseday  %>
+        <%= form.text_field :releaseday %>
+
+        <%= form.label :rating  %>
+        <%= form.text_field :rating %>
+
+        <%= form.label 'Link to series stream/download' %>
+        <%= form.text_field :link %>
+
+        <%= form.submit :class => 'button expand'  %>
+
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= content_for?(:title) ? yield(:title) : "Project Watchlist" %></title>
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Project Watchlist" %>">
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%# Modernizr is required for Zurb Foundation %>
+    <%= javascript_include_tag 'vendor/modernizr' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/redmond/jquery-ui.css", "application" %>
+    <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js", "application" %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+
+    <header>
+      <%= render 'layouts/navigation' %>
+    </header>
+
+    <main>
+       <%= render 'layouts/messages' %>
+       <%= yield %>
+    </main>
+
+    <footer>
+      <%= render 'layouts/footer'%>
+    </footer>
+  </body>
+</html>

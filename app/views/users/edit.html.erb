@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>User profile</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <%= form_for current_user do |form| %>
+
+        <%= form.label :email %>
+        <%= form.text_field :email %>
+
+        <%= form.label :password %>
+        <%= form.password_field :password %>
+
+        <%= form.label :password_confirmation %>
+        <%= form.password_field :password_confirmation %>
+
+        <%= form.submit :class => 'button expand'%>
+
+    <% end %>
+  </div>
+</div>

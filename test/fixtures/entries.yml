@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  lastepisode: 1
+  lastseason: 1
+  releaseday: MyString
+  user_id: 1
+  link: MyString
+
+two:
+  title: MyString
+  lastepisode: 1
+  lastseason: 1
+  releaseday: MyString
+  user_id: 1
+  link: MyString
