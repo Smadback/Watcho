@@ -9,8 +9,9 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_parameters)
-    if @user.save
+    user = User.new(user_parameters)
+    user.role = 'user'
+    if user.save
       redirect_to root_url, :notice => "Registration successful"
     else
       render "new"

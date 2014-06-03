@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
   resources :sessions
   resources :news
-  resources :series
+  resources :searches
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

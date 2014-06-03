@@ -1,15 +1,8 @@
 class EntriesController < ApplicationController
 
-  def index
-    @entries = current_user.entries
-  end
-
-  def show
-  end
-
   # HTML-Seite zum erstellen neuer Einträge
   def new
-    @series = Series.new
+    @entry = Entry.new
   end
 
   # Methode zum erstellen neuer Einträge - wird von der Form von 'new' aufgerufen
@@ -18,7 +11,7 @@ class EntriesController < ApplicationController
     entry = user.entries.new(entry_parameters)
 
     if entry.save
-      redirect_to user_entries_path(current_user.id), :notice => 'Entry creation successful'
+      redirect_to root, :notice => 'TV show successfully added  '
     else
       render 'new'
     end
@@ -31,16 +24,16 @@ class EntriesController < ApplicationController
   def update
     entry = Entry.find(params[:id])
     if entry.update_attributes(entry_parameters)
-      redirect_to user_entries_path(current_user.id)
+      redirect_to root_path
     else
-      redirect_to user_entries_path(current_user.id), :notice => "Edit failed!"
+      redirect_to edit_user_entry_path(:user_id => current_user.id, :id => entry.id), :notice => "Edit failed!"
     end
   end
 
   def destroy
     entry = Entry.find(params[:id])
     entry.destroy
-    redirect_to user_entries_path(current_user.id)
+    redirect_to root_path
   end
 
   def episode_up
@@ -48,9 +41,9 @@ class EntriesController < ApplicationController
     entry.lastepisode = entry.lastepisode + 1
 
     if entry.save
-      redirect_to user_entries_path(current_user.id)
+      redirect_to root_path
     else
-      redirect_to user_entries_path(current_user.id), :notice => "Edit failed!"
+      redirect_to root_path, :notice => "Edit failed!"
     end
   end
 
@@ -59,9 +52,9 @@ class EntriesController < ApplicationController
     entry.lastepisode = entry.lastepisode - 1
 
     if entry.save
-      redirect_to user_entries_path(current_user.id)
+      redirect_to root_path
     else
-      redirect_to user_entries_path(current_user.id), :notice => "Edit failed!"
+      redirect_to root_path, :notice => "Edit failed!"
     end
   end
 
@@ -71,9 +64,9 @@ class EntriesController < ApplicationController
     entry.lastepisode = 0
 
     if entry.save
-      redirect_to user_entries_path(current_user.id)
+      redirect_to root_path
     else
-      redirect_to user_entries_path(current_user.id), :notice => "Edit failed!"
+      redirect_to root_path, :notice => "Edit failed!"
     end
   end
 
@@ -83,9 +76,9 @@ class EntriesController < ApplicationController
     entry.lastepisode = 0
 
     if entry.save
-      redirect_to user_entries_path(current_user.id)
+      redirect_to root_path
     else
-      redirect_to user_entries_path(current_user.id), :notice => "Edit failed!"
+      redirect_to root_path, :notice => "Edit failed!"
     end
   end
 

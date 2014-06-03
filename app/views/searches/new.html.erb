@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    <h1>Search for a TV show</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-10 medium-centered columns">
+    
+    <%= form_for @search do |form| %>
+
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+        
+        <%= form.submit 'Search TV Show', :class => 'button tiny' %>
+
+    <% end %>
+    
+  </div>
+</div>
+
+<% if (!@response.nil?) %>
+	<div class="row">
+	  <div class="medium-10 medium-centered columns">
+	  	<% @response['Results']['show'].each do |key, array| %>
+	  		<article class="panel">
+	  			<h4><%= key['name'] %><small>key['status']</small></h4>
+	      	</article>
+	  	<% end %>
+	  </div>
+	</div>`
+<% end %>

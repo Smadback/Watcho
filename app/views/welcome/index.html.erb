@@ -16,7 +16,7 @@
     
     <div class="row">
       <div class="medium-10 medium-centered columns">
-        <%= link_to 'Add TV show', new_user_entry_path(:user_id => current_user), :class => 'button tiny expand' %>
+        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %> or <%= link_to 'add one manually', new_user_entry_path(:user_id => current_user) %>
       </div>
     </div>
 
@@ -41,8 +41,7 @@
                   <%= link_to '-', {:controller => 'entries' , :action => 'episode_down', :entry_id => entry.id} %></td>
                 <td><%= entry.lastseason %>  <%= link_to '+', {:controller => 'entries' , :action => 'season_up', :entry_id => entry.id} %>|
                   <%= link_to '-', {:controller => 'entries' , :action => 'season_down', :entry_id => entry.id} %></td>
-                <td><%= entry.releaseday %></td>
-                <td><%= entry.rating %></td>
+                <td><%= entry.releaseday %></td>	
                 <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
                 <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete, data: { confirm: "Are you sure to delete this entry?" } %></td>
               </tr>
