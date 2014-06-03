@@ -8,10 +8,11 @@ Rails.application.routes.draw do
   get "signup" => "users#new", :as => "signup"
   get "login" => "sessions#new", :as => "login"
   get "logout" => "sessions#destroy", :as => "logout"
-  get "episodeup" => "entries#episode_up", :as => "episodeup"
-  get "episodedown" => "entries#episode_down", :as => "episodedown"
-  get "seasonup" => "entries#season_up", :as => "seasonup"
-  get "seasondown" => "entries#season_down", :as => "seasondown"
+  get "episodeup" => "entries#episode_up", :as => "episode_up"
+  get "episodedown" => "entries#episode_down", :as => "episode_down"
+  get "seasonup" => "entries#season_up", :as => "season_up"
+  get "seasondown" => "entries#season_down", :as => "season_down"
+  get "add" => "entries#add_show_to_list", :as => "add"
 
   resources :users do
     resources :entries

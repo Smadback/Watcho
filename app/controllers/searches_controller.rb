@@ -5,10 +5,11 @@ class SearchesController < ApplicationController
   end
   
   def create
-    if(params[:search][:name].nil?)
+    if(!params[:search][:name].nil?)
       search = params[:search][:name].parameterize.underscore
-        
+ 
       @response = HTTParty.get("http://services.tvrage.com/feeds/search.php?show=#{search}")
+      print @response
     end
     
     @search = Search.new

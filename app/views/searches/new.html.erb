@@ -24,7 +24,7 @@
 	  <div class="medium-10 medium-centered columns">
 	  	<% @response['Results']['show'].each do |key, array| %>
 	  		<article class="panel">
-	  			<h4><%= key['name'] %><small>key['status']</small></h4>
+	  			<h4><%= key['name'] %> <small><%= link_to 'add to list', add_path(:show_id => key['showid'], :title => key['name']) %></small></h4>
 	      	</article>
 	  	<% end %>
 	  </div>
