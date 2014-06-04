@@ -104,17 +104,27 @@ class EntriesController < ApplicationController
   def add_show_to_list
     # Serieneintrag vorbereiten
     user = current_user
-    entry = user.entries.new
-    entry.key = params[:show_id]
-    entry.title = params[:title]
-    entry.lastepisode = 0
-    entry.lastseason = 0
     
-    # Bei erfolgreichem Speichern weiterleiten
-    if (entry.save)
-      redirect_to root_path
-    else 
-      redirect_to new_search_path, :notice => "Adding failed!"
+    search = Entry.find_by(user_id: user.id ,title: params[:title], key: params[:show_id])
+    if (search.nil?)
+      puts 'GIBTS NOCH NICHT'
+      entry = user.entries.new
+      entry.key = params[:show_id]
+      entry.title = params[:title]
+      entry.lastepisode = 0
+      entry.lastseason = 0
+    
+      # Bei erfolgreichem Speichern weiterleiten
+      if (entry.save)
+        puts 'ERFOLGREICH'
+        redirect_to root_path
+      else 
+        puts 'NICHT ERFOLGREICH'
+        redirect_to new_search_path, :alert => "Adding failed!"
+      end
+    else
+      puts 'GIBTS SCHON'
+      redirect_to new_search_path, :alert => "Show already in your list!"
     end
   end
 

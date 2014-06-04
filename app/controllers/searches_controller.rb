@@ -9,7 +9,10 @@ class SearchesController < ApplicationController
       search = params[:search][:name].parameterize.underscore
  
       @response = HTTParty.get("http://services.tvrage.com/feeds/search.php?show=#{search}")
-      print @response
+      # @response = {"Results" => 
+                        # {"show" => [{"showid" => "24493", "name" => "Game of Thrones"}, 
+                                    # {"showid" => "37350", "name" => "King of Thrones"}
+                                   # ]}}
     end
     
     @search = Search.new

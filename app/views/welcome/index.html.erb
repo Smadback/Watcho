@@ -4,66 +4,85 @@
   </div>
 </div>
 
-<% if !current_user.nil? %>
-<% if !@entries.nil? %>
-
-    <div class="row">
-      <div class="medium-10 medium-centered columns">
-        <%= month_calendar table: {class: "calendar"} do |date| %>
-            <%= date.day %>
-        <% end %>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="medium-10 medium-centered columns">
-        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %> or <%= link_to 'add one manually', new_user_entry_path(:user_id => current_user) %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="medium-10 medium-centered columns">
-        <table class="serieslist">
-          <thead>
-          <tr>
-            <th>Series Title</th>
-            <th>Last Ep. Watched</th>
-            <th>Last Season Watched</th>
-            <th>Weekday</th>
-            <th>Rating</th>
-          </tr>
-          </thead>
-
-          <tbody>
-          <% @entries.each do |entry| %>
-              <tr>
-                <td><%= link_to entry.title, url_with_protocol(entry.link), :target => '_blank' %></td>
-                <td><%= entry.lastepisode %> <%= link_to '+', episode_up_path(:entry_id => entry.id) %>|
-                  <%= link_to '-', episode_down_path(:entry_id => entry.id) %></td>
-                <td><%= entry.lastseason %>  <%= link_to '+', season_up_path(:entry_id => entry.id) %>|
-                  <%= link_to '-', season_down_path(:entry_id => entry.id) %></td>
-                <td><%= entry.releaseday %></td>	
-                <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
-                <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete, data: { confirm: "Are you sure to delete this entry?" } %></td>
-              </tr>
-          <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
 
 
+<% if (!current_user.nil?) %>
+
+	<% if (!@entries.nil?) %>
+	
+	    <div class="row">
+	      <div class="medium-10 medium-centered columns">
+	        <%= month_calendar  events: @episodes, table: {class: "calendar"} do |date, episodes| %>
+	            <%= date.day %>
+	            <% episodes.each do |episode| %>
+	            <div class="calendar-entry">
+	            	<%= episode.show %><br>
+	            	S: <%= episode.season_no %> - E: <%= episode.episode_no %>
+	            </div>
+				<% end %>	
+	        <% end %>
+	      </div>
+	    </div>
+	    
+	    <div class="row">
+	      <div class="medium-10 medium-centered columns">
+	        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %> or <%= link_to 'add one manually', new_user_entry_path(:user_id => current_user) %>
+	      </div>
+	    </div>
+	
+	    <div class="row">
+	      <div class="medium-10 medium-centered columns">
+	        <table class="serieslist">
+	          <thead>
+	          <tr>
+	            <th>Series Title</th>
+	            <th>Last Episode Watched</th>
+	            <th>Weekday</th>
+	            <th>Rating</th>
+	          </tr>
+	          </thead>
+	
+	          <tbody>
+	          <% @entries.each do |entry| %>
+	              <tr>
+	                <td><%= link_to entry.title, url_with_protocol(entry.link), :target => '_blank' %></td>
+	                <td><%= link_to '+', season_up_path(:entry_id => entry.id) %>
+	                  <%= link_to '-', season_down_path(:entry_id => entry.id) %> S: <%= entry.lastseason %> - E: <%= entry.lastepisode %> <%= link_to '+', episode_up_path(:entry_id => entry.id) %>
+	                  <%= link_to '-', episode_down_path(:entry_id => entry.id) %></td>
+	                <td></td>
+	                <td><%= entry.releaseday %></td>	
+	                <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
+	                <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete %></td>
+	              </tr>
+	          <% end %>
+	          </tbody>
+	        </table>
+	      </div>
+	    </div>
+	
+	<% else %>
+	
+	   <div class="row">
+	      <div class="medium-10 medium-centered columns">
+	        <h2>An error occured. This user has no list.</h2>
+	      </div>
+	    </div> 
+	
+	<% end %>
+	
 <% else %>
-
-    <div class="row">
-      <div class="medium-10 medium-centered columns">
-        <h2>An error occured. This user has no list.</h2>
-      </div>
-    </div>
-
+	
+	<div class="row">
+	  <div class="medium-10 medium-centered columns">
+		    <% @news.each do |news|  %>
+		
+		      <article class="panel">
+		        <h3><%= news.title %> <small>written by <%= news.user.name %> on <%= news.created_at.strftime('%d %b %Y') %></small></h3>
+		        <p><%= news.text %></p>
+		      </article>
+		
+		    <% end %>
+	  </div>
+	</div>
+	
 <% end %>
-<% end %>
-
-
-
