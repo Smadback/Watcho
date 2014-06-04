@@ -38,7 +38,6 @@
 	            <th>Series Title</th>
 	            <th>Last Episode Watched</th>
 	            <th>Weekday</th>
-	            <th>Rating</th>
 	          </tr>
 	          </thead>
 	
@@ -49,7 +48,6 @@
 	                <td><%= link_to '+', season_up_path(:entry_id => entry.id) %>
 	                  <%= link_to '-', season_down_path(:entry_id => entry.id) %> S: <%= entry.lastseason %> - E: <%= entry.lastepisode %> <%= link_to '+', episode_up_path(:entry_id => entry.id) %>
 	                  <%= link_to '-', episode_down_path(:entry_id => entry.id) %></td>
-	                <td></td>
 	                <td><%= entry.releaseday %></td>	
 	                <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
 	                <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete %></td>
