@@ -42,8 +42,8 @@ class UserShowsController < ApplicationController
     show_exists = Show.exists?(params['show_id'])
      
     unless show_exists
-      #show_infos = HTTParty.get("http://services.tvrage.com/feeds/showinfo.php?sid=#{params['show_id']}")
-      show_infos = {"Showinfo" => {"showid"=> "24493", "showname" => "Game of Thrones", "airtime" => "21:00", "airday" => "Sunday", "timezone" => "GMT-5 +DST"}}
+      show_infos = HTTParty.get("http://services.tvrage.com/feeds/showinfo.php?sid=#{params['show_id']}")
+      #show_infos = {"Showinfo" => {"showid"=> "24493", "showname" => "Game of Thrones", "airtime" => "21:00", "airday" => "Sunday", "timezone" => "GMT-5 +DST"}}
       
       show = Show.new
       show.id = show_infos['Showinfo']['showid']
@@ -73,23 +73,23 @@ class UserShowsController < ApplicationController
         
         if user_show.save
           
-          #season_info = HTTParty.get("http://services.tvrage.com/feeds/episode_list.php?sid=#{params['show_id']}")
-           season_info = {"Show" => 
-                                { "name" => "Game of Thrones",
-                                  "Episodelist" => 
-                                      {"Season" => 
-                                            [{"episode" => [{"seasonnum" => "01", "airdate" => "2013-03-31"},
-                                                            {"seasonnum" => "02", "airdate" => "2013-04-07"},
-                                                            {"seasonnum" => "03", "airdate" => "2013-04-14"},
-                                                            {"seasonnum" => "04", "airdate" => "2013-04-21"},
-                                                            {"seasonnum" => "05", "airdate" => "2013-04-28"},
-                                                           ], "no" => "3"},
-                                             {"episode" => [{"seasonnum" => "06", "airdate" => "2014-05-11"},
-                                                            {"seasonnum" => "07", "airdate" => "2014-05-18"},
-                                                            {"seasonnum" => "08", "airdate" => "2014-06-01"},
-                                                            {"seasonnum" => "09", "airdate" => "2014-06-08"},
-                                                            {"seasonnum" => "10", "airdate" => "2014-06-15"},
-                                                           ],"no" => "4"}]}}}
+          season_info = HTTParty.get("http://services.tvrage.com/feeds/episode_list.php?sid=#{params['show_id']}")
+           # season_info = {"Show" => 
+                                # { "name" => "Game of Thrones",
+                                  # "Episodelist" => 
+                                      # {"Season" => 
+                                            # [{"episode" => [{"seasonnum" => "01", "airdate" => "2013-03-31"},
+                                                            # {"seasonnum" => "02", "airdate" => "2013-04-07"},
+                                                            # {"seasonnum" => "03", "airdate" => "2013-04-14"},
+                                                            # {"seasonnum" => "04", "airdate" => "2013-04-21"},
+                                                            # {"seasonnum" => "05", "airdate" => "2013-04-28"},
+                                                           # ], "no" => "3"},
+                                             # {"episode" => [{"seasonnum" => "06", "airdate" => "2014-05-11"},
+                                                            # {"seasonnum" => "07", "airdate" => "2014-05-18"},
+                                                            # {"seasonnum" => "08", "airdate" => "2014-06-01"},
+                                                            # {"seasonnum" => "09", "airdate" => "2014-06-08"},
+                                                            # {"seasonnum" => "10", "airdate" => "2014-06-15"},
+                                                           # ],"no" => "4"}]}}}
                                                            
           # --------------------------------------------------------
           # ---- Wenn nur eine Staffel vorhanden ist
@@ -131,17 +131,39 @@ class UserShowsController < ApplicationController
               # --------------------------------------------------------
               # ---- Iterieren der Episoden der Staffeln der hinzugefügten Serie
               # --------------------------------------------------------               
-              season_info['Show']['Episodelist']['Season'][counter]['episode'].each do |episode|
-                if(!episode['airdate'].eql?("0000-00-00"))
-                  episode_number = Integer(episode['seasonnum'], 10)
-                  starts_at = Date.parse(episode['airdate'])
-                  episode = Episode.new
-                  episode.season_id = season.id
-                  episode.number = episode_number
-                  episode.starts_at = starts_at
-                  episode.save
+                temp = season_info['Show']['Episodelist']['Season'][counter]['episode']
+                
+                if (temp.kind_of?(Array))
+                  
+                  # --------------------------------------------------------
+                  # ---- Die Staffel hat mehr als 1 Episdode
+                  # --------------------------------------------------------   
+                  temp.each do |ep|
+                    if(!ep['airdate'].eql?("0000-00-00"))
+                      episode_number = Integer(ep['seasonnum'], 10)
+                      starts_at = Date.parse(ep['airdate'])
+                      episode = Episode.new
+                      episode.season_id = season.id
+                      episode.number = episode_number
+                      episode.starts_at = starts_at
+                      episode.save
+                    end
+                  end
+                else
+                
+                  # --------------------------------------------------------
+                  # ---- Die Staffel hat nur 1 Episode
+                  # -------------------------------------------------------- 
+                  if(!temp['airdate'].eql?("0000-00-00"))
+                    episode_number = Integer(temp['seasonnum'], 10)
+                    starts_at = Date.parse(temp['airdate'])
+                    episode = Episode.new
+                    episode.season_id = season.id
+                    episode.number = episode_number
+                    episode.starts_at = starts_at
+                    episode.save
+                  end
                 end
-              end
               counter = counter + 1
             end
           end   

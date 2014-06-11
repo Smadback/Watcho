@@ -51,10 +51,8 @@ ActiveRecord::Schema.define(version: 20140611073319) do
   end
 
   create_table "seasons", force: true do |t|
-    t.integer  "show_id"
-    t.integer  "number",     null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "show_id"
+    t.integer "number",  null: false
   end
 
   create_table "shows", force: true do |t|
