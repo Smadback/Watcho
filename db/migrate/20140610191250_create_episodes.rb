@@ -1,7 +1,5 @@
 class CreateEpisodes < ActiveRecord::Migration
   def self.up
-    drop_table :episodes
-    
     create_table :episodes do |t|
       t.integer :season_id, :references => [:season, :id]
       t.integer :number, :null => false
