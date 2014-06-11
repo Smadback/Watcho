@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  airdate: MyString
+  airtime: 2014-06-09
+  timezone: MyString
+
+two:
+  title: MyString
+  airdate: MyString
+  airtime: 2014-06-09
+  timezone: MyString

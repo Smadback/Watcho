@@ -19,12 +19,19 @@
   </div>
 </div>
 
-<% if (!@response.nil?) %>
+<% if (!@shows.nil?) %>
+
 	<div class="row">
 	  <div class="medium-10 medium-centered columns">
-	  	<% @response['Results']['show'].each do |key, array| %>
+		<article class="panel callout">Beim hinzufügen einer Serie können Ladezeiten entstehen, da die Serieninfos zunächst heruntergeladen werden müssen.</article>  
+	  </div>
+	</div>
+
+	<div class="row">
+	  <div class="medium-10 medium-centered columns">
+	  	<% @shows.each do |name, show_id| %>
 	  		<article class="panel">
-	  			<h4><%= key['name'] %> <small><%= link_to 'add to list', add_path(:show_id => key['showid'], :title => key['name']) %></small></h4>
+	  			<h4><%= name %> <small><%= link_to 'add to list', add_path(:show_id => show_id) %></small></h4>
 	      	</article>
 	  	<% end %>
 	  </div>

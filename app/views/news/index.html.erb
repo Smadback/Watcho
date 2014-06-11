@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<% if current_user.role = 'admin' %>
+<% if current_user.role == 'admin' %>
 	<div class="row">
 		<div class="medium-10 medium-centered columns">
 			<%= link_to 'New news', new_news_path, :class => 'button tiny' %>

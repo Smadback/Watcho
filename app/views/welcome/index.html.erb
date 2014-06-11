@@ -7,26 +7,24 @@
 
 
 <% if (!current_user.nil?) %>
-
-	<% if (!@entries.nil?) %>
 	
 	    <div class="row">
 	      <div class="medium-10 medium-centered columns">
-	        <%= month_calendar  events: @episodes, table: {class: "calendar"} do |date, episodes| %>
+	        <%= month_calendar events: @episodes, table: {class: "calendar"} do |date, episodes| %>
 	            <%= date.day %>
 	            <% episodes.each do |episode| %>
 	            <div class="calendar-entry">
-	            	<%= episode.show %><br>
-	            	S: <%= episode.season_no %> - E: <%= episode.episode_no %>
+	            	<%= episode.season.show.title %><br>
+	            	S: <%= episode.season.number %> - E: <%= episode.number %>
 	            </div>
-				<% end %>	
+				<% end %>
 	        <% end %>
 	      </div>
 	    </div>
 	    
 	    <div class="row">
 	      <div class="medium-10 medium-centered columns">
-	        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %> or <%= link_to 'add one manually', new_user_entry_path(:user_id => current_user) %>
+	        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %>
 	      </div>
 	    </div>
 	
@@ -37,36 +35,32 @@
 	          <tr>
 	            <th>Series Title</th>
 	            <th>Last Episode Watched</th>
+	            <th>Episodes Available</th>
 	            <th>Weekday</th>
 	          </tr>
 	          </thead>
 	
 	          <tbody>
-	          <% @entries.each do |entry| %>
+	          <% @user_shows.each do |user_show| %>
 	              <tr>
-	                <td><%= link_to entry.title, url_with_protocol(entry.link), :target => '_blank' %></td>
-	                <td><%= link_to '+', season_up_path(:entry_id => entry.id) %>
-	                  <%= link_to '-', season_down_path(:entry_id => entry.id) %> S: <%= entry.lastseason %> - E: <%= entry.lastepisode %> <%= link_to '+', episode_up_path(:entry_id => entry.id) %>
-	                  <%= link_to '-', episode_down_path(:entry_id => entry.id) %></td>
-	                <td><%= entry.releaseday %></td>	
-	                <td><%= link_to 'E', edit_user_entry_path(current_user, entry) %></td>
-	                <td><%= link_to 'X', user_entry_path(current_user, entry), :method => :delete %></td>
+	                <td><%= link_to user_show.show.title, url_with_protocol(user_show.link), :target => '_blank' %></td>
+	                <td><%= link_to '+', last_season_up_path(:show_id => user_show.show_id) %>
+	                  <%= link_to '-', last_season_down_path(:show_id => user_show.show_id) %> 
+	                  S: <%= user_show.lastseason %> - E: <%= user_show.lastepisode %> 
+	                  <%= link_to '+', last_episode_up_path(:show_id => user_show.show_id) %>
+	                  <%= link_to '-', last_episode_down_path(:show_id => user_show.show_id) %></td>
+	                <td><%= user_show.episodes_available %>
+	                	<%= link_to '+', episodes_available_up_path(:show_id => user_show.show_id) %>
+	                    <%= link_to '-', episodes_available_down_path(:show_id => user_show.show_id) %> </td>	
+	                <td><%= user_show.show.airday %></td>	
+	                <td><%= link_to 'E', edit_user_user_show_path(current_user, user_show) %></td>
+	                <td><%= link_to 'X', user_user_show_path(current_user, user_show), :method => :delete %></td>
 	              </tr>
 	          <% end %>
 	          </tbody>
 	        </table>
 	      </div>
 	    </div>
-	
-	<% else %>
-	
-	   <div class="row">
-	      <div class="medium-10 medium-centered columns">
-	        <h2>An error occured. This user has no list.</h2>
-	      </div>
-	    </div> 
-	
-	<% end %>
 	
 <% else %>
 	
