@@ -1,0 +1,22 @@
+<% if (!@episodes.nil?) %>
+<div class="row">
+  <div class="medium-12 medium-centered columns">
+	<%= month_calendar events: @episodes, table: {class: "calendar"}, thead: false do |date, episodes| %>
+		<div class="calendar-day"><%= date.day %> <div style="font-size: 8px"><%= date.strftime('%A').upcase %></div></div>
+		<% episodes.each do |episode| %>
+    		<div class="calendar-episode">
+            	<%= episode.season.show.title %><br>
+            	S: <%= episode.season.number %> - E: <%= episode.number %>
+           	</div>
+           	<% if (!episode.equal? episodes.last) %><hr><% end %>
+		<% end %>
+    <% end %>
+  </div>
+</div>
+<% end %>
+
+<div class="row">
+  <div class="medium-12 medium-centered columns">
+    <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %>
+  </div>
+</div>

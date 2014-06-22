@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="medium-8 medium-centered columns">
+    <%= form_for ([current_user, @user_show]) do |form| %>
+        
+        <%= form.hidden_field :show_id %>
+        
+        <%= form.label "Last episode watched" %>
+        <%= form.text_field :lastepisode %>
+        
+        <%= form.label "Last season watched" %>
+        <%= form.text_field :lastseason %>
+
+        <%= form.label "Episodes available" %>
+        <%= form.text_field :episodes_available %>
+        
+        <%= form.label 'Link to series stream/download' %>
+        <%= form.text_field :link %>
+
+        <%= form.submit 'Add show to list', :class => 'button tiny'  %>
+
+    <% end %>
+  </div>
+</div>

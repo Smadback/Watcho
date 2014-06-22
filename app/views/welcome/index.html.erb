@@ -1,80 +1,22 @@
+<% if (!current_user.nil?) %>
+<% if (current_user.role == 'admin') %>
+	<div class="row">
+		<div class="medium-12 columns">
+			<%= link_to 'Write new news', new_news_path, :class => 'button tiny' %>
+	    </div>
+	</div>
+<% end %>
+<% end%>
+
 <div class="row">
-  <div class="medium-10 medium-centered columns">
-    <h1>Project Watchlist <small>The MVWebapplication</small></h1>
+	<div class="medium-12 medium-centered columns">
+		<% @news.each do |news|  %>
+		
+		  <article class="panel">
+		    <h3><%= news.title %> <small>written by <%= news.user.name %> on <%= news.created_at.strftime('%d %b %Y') %></small></h3>
+		    <p><%= news.text %></p>
+		  </article>
+		
+		<% end %>
   </div>
 </div>
-
-
-
-<% if (!current_user.nil?) %>
-	
-	    <div class="row">
-	      <div class="medium-10 medium-centered columns">
-	        <%= month_calendar events: @episodes, table: {class: "calendar"} do |date, episodes| %>
-	            <%= date.day %>
-	            <% episodes.each do |episode| %>
-	            <div class="calendar-entry">
-	            	<%= episode.season.show.title %><br>
-	            	S: <%= episode.season.number %> - E: <%= episode.number %>
-	            </div>
-				<% end %>
-	        <% end %>
-	      </div>
-	    </div>
-	    
-	    <div class="row">
-	      <div class="medium-10 medium-centered columns">
-	        <%= link_to 'Search TV Show', new_search_path, :class => 'button tiny' %>
-	      </div>
-	    </div>
-	
-	    <div class="row">
-	      <div class="medium-10 medium-centered columns">
-	        <table class="serieslist">
-	          <thead>
-	          <tr>
-	            <th>Series Title</th>
-	            <th>Last Episode Watched</th>
-	            <th>Episodes Available</th>
-	            <th>Weekday</th>
-	          </tr>
-	          </thead>
-	
-	          <tbody>
-	          <% @user_shows.each do |user_show| %>
-	              <tr>
-	                <td><%= link_to user_show.show.title, url_with_protocol(user_show.link), :target => '_blank' %></td>
-	                <td><%= link_to '+', last_season_up_path(:show_id => user_show.show_id) %>
-	                  <%= link_to '-', last_season_down_path(:show_id => user_show.show_id) %> 
-	                  S: <%= user_show.lastseason %> - E: <%= user_show.lastepisode %> 
-	                  <%= link_to '+', last_episode_up_path(:show_id => user_show.show_id) %>
-	                  <%= link_to '-', last_episode_down_path(:show_id => user_show.show_id) %></td>
-	                <td><%= user_show.episodes_available %>
-	                	<%= link_to '+', episodes_available_up_path(:show_id => user_show.show_id) %>
-	                    <%= link_to '-', episodes_available_down_path(:show_id => user_show.show_id) %> </td>	
-	                <td><%= user_show.show.airday %></td>	
-	                <td><%= link_to 'E', edit_user_user_show_path(current_user, user_show) %></td>
-	                <td><%= link_to 'X', user_user_show_path(current_user, user_show), :method => :delete %></td>
-	              </tr>
-	          <% end %>
-	          </tbody>
-	        </table>
-	      </div>
-	    </div>
-	
-<% else %>
-	
-	<div class="row">
-	  <div class="medium-10 medium-centered columns">
-		    <% @news.each do |news|  %>
-		
-		      <article class="panel">
-		        <h3><%= news.title %> <small>written by <%= news.user.name %> on <%= news.created_at.strftime('%d %b %Y') %></small></h3>
-		        <p><%= news.text %></p>
-		      </article>
-		
-		    <% end %>
-	  </div>
-	</div>
-	
-<% end %>

@@ -1,0 +1,30 @@
+###STAFFEL###
+
+season_info = {"Show" => 
+					{ "name" => "Game of Thrones",
+					  "Episodelist" => 
+						  {"Season" => 
+								[{"episode" => [{"seasonnum" => "01", "airdate" => "2013-03-31"},
+												{"seasonnum" => "02", "airdate" => "2013-04-07"},
+												{"seasonnum" => "03", "airdate" => "2013-04-14"},
+												{"seasonnum" => "04", "airdate" => "2013-04-21"},
+												{"seasonnum" => "05", "airdate" => "2013-04-28"},
+											   ], "no" => "3"},
+								 {"episode" => [{"seasonnum" => "06", "airdate" => "2014-05-11"},
+												{"seasonnum" => "07", "airdate" => "2014-05-18"},
+												{"seasonnum" => "08", "airdate" => "2014-06-01"},
+												{"seasonnum" => "09", "airdate" => "2014-06-08"},
+												{"seasonnum" => "10", "airdate" => "2014-06-15"},
+											   ],"no" => "4"}]}}}
+											   
+			
+###SERIE###
+			
+show_infos = {"Showinfo" => 
+					{"showid"=> "24493", 
+					 "showname" => "Game of Thrones",
+					 "airtime" => "21:00", 
+					 "airday" => "Sunday", 
+					 "timezone" => "GMT-5 +DST"
+					}
+			 }											   

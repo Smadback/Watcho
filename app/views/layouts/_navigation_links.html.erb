@@ -8,9 +8,11 @@
       <li class="divider"></li>
   <% else %>
       <li class="divider"></li>
-      <li><%= link_to current_user.name, edit_user_path(:id => current_user.id) %></li>
+      <li class="<%= 'active' if current_page?(calendars_path) %>"><%= link_to 'The Calendar', calendars_path %></li>
       <li class="divider"></li>
-      <li><%= link_to 'News', news_index_path %></li>
+      <li class="<%= 'active' if current_page?(user_user_shows_path(:user_id => current_user.id)) %>"><%= link_to 'The List', user_user_shows_path(:user_id => current_user.id) %></li>
+      <li class="divider"></li>
+      <li class="<%= 'active' if current_page?(edit_user_path(:id => current_user.id)) %>"><%= link_to "#{current_user.name}'s Profile", edit_user_path(:id => current_user.id) %></li>
       <li class="divider"></li>
       <li><%= link_to 'Logout', logout_path  %></li>
       <li class="divider"></li>
@@ -18,5 +20,5 @@
 </ul>
 
 <!-- Left Nav Section -->
-<ul class="left">
+<ul>
 </ul>

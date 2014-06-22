@@ -11,11 +11,19 @@
     <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/redmond/jquery-ui.css", "application" %>
     <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js", "application" %>
     <%= csrf_meta_tags %>
+    
+    <!--[if lt IE 9]>
+	  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+	  <script src="//s3.amazonaws.com/nwapi/nwmatcher/nwmatcher-1.2.5-min.js"></script>
+	  <script src="//html5base.googlecode.com/svn-history/r38/trunk/js/selectivizr-1.0.3b.js"></script>
+	  <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.1.0/respond.min.js"></script>
+	<![endif]-->
   </head>
   <body>
 
     <header>
       <%= render 'layouts/navigation' %>
+      <%= render 'layouts/header' %>
     </header>
 
     <main>
@@ -26,5 +34,7 @@
     <footer>
       <%= render 'layouts/footer'%>
     </footer>
+    
+    <script src="https://github.com/chuckcarpenter/REM-unit-polyfill/blob/master/js/rem.js" type="text/javascript"></script>
   </body>
 </html>

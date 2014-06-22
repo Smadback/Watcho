@@ -2,6 +2,7 @@ class SearchesController < ApplicationController
   
   def new 
     @search = Search.new
+    @title = "Search for a TV show"
   end
 
 # -------------------------------------------------------------------------------   
@@ -9,15 +10,15 @@ class SearchesController < ApplicationController
 # -------------------------------------------------------------------------------    
   def create
     
-    if(!params[:search][:name].nil?)
+    if(!params[:search][:name].eql?(""))
     
       @shows = Hash.new
       # Ersetzen der Leerzeichen in dem Suchwert durch Unterstriche (Game of Thrones => Game_of_Thrones)
       search = params[:search][:name].parameterize.underscore
  
       response = HTTParty.get("http://services.tvrage.com/feeds/search.php?show=#{search}")
-      # response = {"Results" => 
-                         # {"show" => {"showid" => "24493", "name" => "Game of Thrones", "airday" => "Sunday", "airtime" => "8 pm", "timezone" => "Euh"}}}
+       # response = {"Results" => 
+                          # {"show" => {"showid" => "24493", "name" => "Game of Thrones", "airday" => "Sunday", "airtime" => "8 pm", "timezone" => "Euh"}}}
                          
       shows_hash = response['Results']['show']                
       
@@ -39,6 +40,7 @@ class SearchesController < ApplicationController
     end
     
     @search = Search.new
+    @title = "Search for a TV show"
     render 'new'
   end
   

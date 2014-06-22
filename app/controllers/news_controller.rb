@@ -1,11 +1,8 @@
 class NewsController < ApplicationController
   
-  def index
-    @news = News.order(created_at: :desc)
-  end
-  
   def new
     @news = News.new
+    @title = "Create new news"
   end
   
   def create

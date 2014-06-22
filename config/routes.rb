@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   resources :sessions
   resources :news
   resources :searches
+  resources :episodes
+  resources :calendars
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

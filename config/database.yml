@@ -29,7 +29,5 @@ test:
 production:
   <<: *default
   database: Watcho_production
-  username: Watcho_Watchlist
-  password: <%= ENV['Watcho_DATABASE_PASSWORD'] %>
-#  username: projekto
-#  password: root
+  username: <%= ENV['WATCHO_DATABASE_NAME'] %>
+  password: <%= ENV['WATCHO_DATABASE_PASSWORD'] %>

@@ -30,7 +30,9 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 # gem 'unicorn'
 
 # Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+gem 'capistrano',  '~> 3.1'
+gem 'capistrano-rails', '~> 1.1', group: :development
+gem 'capistrano-bundler', '~> 1.1.2'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
@@ -51,5 +53,5 @@ gem 'nokogiri'
 gem 'rack', '~>1.1' 
 gem 'rspec'
 
-# User HTTParty for easy API access
+# Use HTTParty for easy API access
 gem 'httparty'

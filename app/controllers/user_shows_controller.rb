@@ -1,20 +1,100 @@
 class UserShowsController < ApplicationController
   
   def index
+    @user_shows = UserShow.find_by_sql("SELECT * FROM user_shows WHERE user_id = '#{current_user.id}'")
+    @title = "The List"
+    @subtitle = "all your favorite shows neatly arranged"
   end
 
   def new
+    @user_show = UserShow.new
+    @user_show.show_id = params[:show_id]
+    @title = "Add #{params[:title]} to your list"
   end
 
   def create
+    user = current_user
+    show_id = params[:user_show][:show_id]
+
+    # -------------------------------------------------------  
+    # ---- Überprüfen, ob die Serie schon in der Datenbank vorhanden ist, 
+    # ---- wenn nicht, wird sie neu angelegt
+    # ------------------------------------------------------- 
+    show_exists = Show.exists?(show_id)
+     
+    unless show_exists
+      # API-Aufruf zum bekommen allgemeiner Serieninfos
+      show_infos = HTTParty.get("http://services.tvrage.com/feeds/showinfo.php?sid=#{show_id}")
+      temp = show_infos['Showinfo']
+      show = Show.new
+      show.attributes = {id: temp['showid'], title: temp['showname'], airday: temp['airday'], 
+                         airtime: temp['airtime'], timezone: temp['timezone']}
+      saved = show.save
+      
+      logger.debug {"#{show.title} in Datenbank geschrieben"}
+      
+      # API-Aufruf zum bekommen der Episodenliste einer Serie
+      season_info = HTTParty.get("http://services.tvrage.com/feeds/episode_list.php?sid=#{show_id}")
+      logger.debug {"[DEBUG] #{show.title}: #{season_info['Show']['totalseasons']} Staffel(n) vorhanden"}  
+      
+      # --------------------------------------------------------
+      # ---- Wenn nur eine Staffel vorhanden ist
+      # --------------------------------------------------------                                                      
+      if (season_info['Show']['totalseasons'] == "1")
+        only_one_season(show, season_info)
+        
+      # --------------------------------------------------------
+      # ---- Wenn mehr als eine Staffel vorhanden ist
+      # --------------------------------------------------------    
+      else
+        more_than_one_season(show, season_info)
+      end
+    else
+      logger.debug {"[DEBUG] Serie(#{params[:user_show]['show_id']}) muss nicht in die Datenbank geschrieben werden"}
+    end
+
+    show_exists = Show.exists?(show_id)
+    # -------------------------------------------------------
+    # ---- Neuen User_Show Eintrag machen, mit der gesuchten Serie und dem
+    # ---- angemeldeten Benutzer, falls nicht schon vorhanden
+    # --------------------------------------------------------  
+    if (show_exists)
+      user_show_exists = UserShow.exists?(:user_id => current_user.id, :show_id => show_id)
+      
+      unless user_show_exists
+        user_show = UserShow.new
+        show = Show.find_by(id: show_id)
+        user_show.attributes = {user: current_user, show: show, lastseason: params[:user_show][:lastseason], 
+                                lastepisode: params[:user_show][:lastepisode], episodes_available: params[:user_show][:episodes_available], 
+                                link: params[:user_show][:link]}
+        
+        if user_show.save
+          # Serieneintrag konnte erfolgreich gespeichert werden
+          redirect_to user_user_shows_path(:id => current_user.id), :notice => "#{user_show.show.title} was successfully added to your list."
+        else
+          # Beim Speichern ist ein Fehler aufgetreten
+          redirect_to new_search_path, :alert => "An error occurred."
+        end
+      else
+        # Beim Speichern ist ein Fehler aufgetreten
+        redirect_to new_search_path, :alert => "The show is already in your list."  
+      end
+    else
+      # Beim Speichern der Serie ist ein Fehler aufgetreten
+      redirect_to new_search_path, :alert => "An error occurred."
+    end
   end
+ 
 
 # -------------------------------------------------------------------------------   
 # ---- Leitet weiter zur edit.html.erb von user_shows
 # -------------------------------------------------------------------------------    
   def edit
     @user_show = UserShow.find(params[:id])
+    @title = "Edit a series entry"
   end
+
+
 
 # -------------------------------------------------------------------------------   
 # ---- Aktualisiert die Informationen des Serieneintrags in der Liste
@@ -23,163 +103,120 @@ class UserShowsController < ApplicationController
     user_show = UserShow.find(params[:id])
     
     if user_show.update_attributes(user_show_parameters)
-      redirect_to root_path
+      redirect_to user_user_shows_path(:user_id => current_user.id)
     else
       redirect_to edit_user_user_show_path(:user_id => current_user.id, :show_id => params[:show_id]), :alert => "Edit failed!"
     end
   end
-  
+
+
+
 # -------------------------------------------------------------------------------   
-# ---- Hinzufügen einer Serie zur eigenen Liste
-# -------------------------------------------------------------------------------    
-  def add_show_to_list    
-    user = current_user
-
-    # -------------------------------------------------------  
-    # ---- Überprüfen, ob die Serie schon in der Datenbank vorhanden ist, 
-    # ---- wenn nicht, wird sie neu angelegt
-    # ------------------------------------------------------- 
-    show_exists = Show.exists?(params['show_id'])
-     
-    unless show_exists
-      show_infos = HTTParty.get("http://services.tvrage.com/feeds/showinfo.php?sid=#{params['show_id']}")
-      #show_infos = {"Showinfo" => {"showid"=> "24493", "showname" => "Game of Thrones", "airtime" => "21:00", "airday" => "Sunday", "timezone" => "GMT-5 +DST"}}
-      
-      show = Show.new
-      show.id = show_infos['Showinfo']['showid']
-      show.title = show_infos['Showinfo']['showname']
-      show.airday = show_infos['Showinfo']['airday']
-      show.airtime = show_infos['Showinfo']['airtime']
-      show.timezone = show_infos['Showinfo']['timezone']
-      
-      saved = show.save
-    else
-      # Serieneintrag schon in der Liste
-      redirect_to new_search_path, :alert => "This show is already in your list"
-    end
-
-    # -------------------------------------------------------
-    # ---- Neuen User_Show Eintrag machen, mit der gesuchten Serie und dem
-    # ---- angemeldeten Benutzer, falls nicht schon vorhanden
-    # --------------------------------------------------------  
-    if (saved || show_exists)
-      user_show_exists = UserShow.exists?(:user_id => current_user.id, :show_id => params['show_id'])
-      
-      unless user_show_exists
-        user_show = UserShow.new
-        user_show.user = current_user
-        show = Show.find_by(id: params['show_id'])
-        user_show.show = show
-        
-        if user_show.save
-          
-          season_info = HTTParty.get("http://services.tvrage.com/feeds/episode_list.php?sid=#{params['show_id']}")
-           # season_info = {"Show" => 
-                                # { "name" => "Game of Thrones",
-                                  # "Episodelist" => 
-                                      # {"Season" => 
-                                            # [{"episode" => [{"seasonnum" => "01", "airdate" => "2013-03-31"},
-                                                            # {"seasonnum" => "02", "airdate" => "2013-04-07"},
-                                                            # {"seasonnum" => "03", "airdate" => "2013-04-14"},
-                                                            # {"seasonnum" => "04", "airdate" => "2013-04-21"},
-                                                            # {"seasonnum" => "05", "airdate" => "2013-04-28"},
-                                                           # ], "no" => "3"},
-                                             # {"episode" => [{"seasonnum" => "06", "airdate" => "2014-05-11"},
-                                                            # {"seasonnum" => "07", "airdate" => "2014-05-18"},
-                                                            # {"seasonnum" => "08", "airdate" => "2014-06-01"},
-                                                            # {"seasonnum" => "09", "airdate" => "2014-06-08"},
-                                                            # {"seasonnum" => "10", "airdate" => "2014-06-15"},
-                                                           # ],"no" => "4"}]}}}
-                                                           
-          # --------------------------------------------------------
-          # ---- Wenn nur eine Staffel vorhanden ist
-          # --------------------------------------------------------                                                      
-          if (season_info['Show']['totalseasons'] == "1")
-            
-            season = season_info['Show']['Episodelist']['Season']
-            season_number = Integer(season['no'], 10)
-            season = Season.new
-            season.show_id = show.id
-            season.number = season_number
-            season.save
-            
-            season_info['Show']['Episodelist']['Season']['episode'].each do |episode|
-              if(!episode['airdate'].eql?("0000-00-00"))
-                episode_number = Integer(episode['seasonnum'], 10)
-                starts_at = Date.parse(episode['airdate'])
-                episode = Episode.new
-                episode.season_id = season.id
-                episode.number = episode_number
-                episode.starts_at = starts_at
-                episode.save
-              end
-            end
-          else
-            
-            # --------------------------------------------------------
-            # ---- Iterieren der Staffeln der hinzugefügten Serie, 
-            # ---- bei mehr als einer Staffel
-            # --------------------------------------------------------
-            counter = 0                                          
-            season_info['Show']['Episodelist']['Season'].each do |season| 
-              season_number = Integer(season['no'], 10)
-              season = Season.new
-              season.show_id = show.id
-              season.number = season_number
-              season.save
-  
-              # --------------------------------------------------------
-              # ---- Iterieren der Episoden der Staffeln der hinzugefügten Serie
-              # --------------------------------------------------------               
-                temp = season_info['Show']['Episodelist']['Season'][counter]['episode']
-                
-                if (temp.kind_of?(Array))
-                  
-                  # --------------------------------------------------------
-                  # ---- Die Staffel hat mehr als 1 Episdode
-                  # --------------------------------------------------------   
-                  temp.each do |ep|
-                    if(!ep['airdate'].eql?("0000-00-00"))
-                      episode_number = Integer(ep['seasonnum'], 10)
-                      starts_at = Date.parse(ep['airdate'])
-                      episode = Episode.new
-                      episode.season_id = season.id
-                      episode.number = episode_number
-                      episode.starts_at = starts_at
-                      episode.save
-                    end
-                  end
-                else
-                
-                  # --------------------------------------------------------
-                  # ---- Die Staffel hat nur 1 Episode
-                  # -------------------------------------------------------- 
-                  if(!temp['airdate'].eql?("0000-00-00"))
-                    episode_number = Integer(temp['seasonnum'], 10)
-                    starts_at = Date.parse(temp['airdate'])
-                    episode = Episode.new
-                    episode.season_id = season.id
-                    episode.number = episode_number
-                    episode.starts_at = starts_at
-                    episode.save
-                  end
-                end
-              counter = counter + 1
-            end
-          end   
-          
-          # Serieneintrag konnte erfolgreich gespeichert werden
-          redirect_to root_path, :notice => "#{user_show.show.title} was successfully added to your list."
-        else
-          # Beim Speichern ist ein Fehler aufgetreten
-          redirect_to new_search_path, :alert => "An error occured."
-        end
-      end
-    else
-      redirect_to root_path
-    end
+# ---- Löscht einen Eintrag aus der Serienliste
+# -------------------------------------------------------------------------------   
+  def destroy
+    user_show = UserShow.find(params[:id])
+    user_show.destroy
+    redirect_to user_user_shows_path(:user_id => user_show.user_id), :notice => "#{user_show.show.title} successfully removed"
   end
 
+
+
+# -------------------------------------------------------------------------------   
+# ---- Wenn die Serie nur eine Staffel enthält
+# -------------------------------------------------------------------------------      
+  def only_one_season(show, season_info)
+    logger.debug {"[DEBUG] Starte Staffel hinzufuegen"} #Logging 
+    season_hash = season_info['Show']['Episodelist']['Season']
+    season = add_season(show, season_hash)
+    
+    season_info['Show']['Episodelist']['Season']['episode'].each do |episode_hash|
+      if(!episode_hash['airdate'].eql?("0000-00-00"))
+        add_episode(season, episode_hash)   
+      end
+    end  
+    logger.debug {"[DEBUG] Die Staffel hinzugefuegt"} #Logging    
+  end
+  
+  
+  
+# -------------------------------------------------------------------------------   
+# ---- Wenn die Serie mehr als eine Staffel besitzt
+# -------------------------------------------------------------------------------      
+  def more_than_one_season(show, season_info)
+    logger.debug {"[DEBUG] Starte Staffeln hinzufuegen"} #Logging 
+  
+    # --------------------------------------------------------
+    # ---- Iterieren der Staffeln der hinzugefügten Serie, 
+    # ---- bei mehr als einer Staffel
+    # --------------------------------------------------------
+    counter = 0                                          
+    season_info['Show']['Episodelist']['Season'].each do |season_hash| 
+      season = add_season(show, season_hash)
+  
+      # --------------------------------------------------------
+      # ---- Iterieren der Episoden der Staffeln der hinzugefügten Serie
+      # --------------------------------------------------------               
+      episode_hash = season_info['Show']['Episodelist']['Season'][counter]['episode']
+        
+        if (episode_hash.kind_of?(Array))
+          
+          # --------------------------------------------------------
+          # ---- Die Staffel hat mehr als 1 Episdode
+          # --------------------------------------------------------   
+          episode_hash.each do |episode|
+            if(!episode['airdate'].eql?("0000-00-00"))
+              add_episode(season, episode)              
+            end
+          end
+        else
+        
+          # --------------------------------------------------------
+          # ---- Die Staffel hat nur 1 Episode
+          # -------------------------------------------------------- 
+          if(episode_hash['airdate'].eql?("0000-00-00"))
+            add_episode(season, episode_hash)
+          end
+        end
+      counter = counter + 1
+    end
+  
+    logger.debug {"[DEBUG] Alle Staffeln hinzugefuegt"} #Logging    
+  end  
+  
+  
+  
+# -------------------------------------------------------------------------------   
+# ---- Speichern einer Episode einer Staffel
+# -------------------------------------------------------------------------------    
+  def add_episode(season, episode_hash)
+    episode_number = Integer(episode_hash['seasonnum'], 10)
+    episode_date = Date.parse(episode_hash['airdate'])
+    episode = Episode.new
+    episode.attributes = {season_id: season.id, number: episode_number, starts_at: episode_date}
+    episode.save
+    
+    logger.debug {"[DEBUG] Episode #{episode_hash['epnum']} in die Datenbank geschrieben"}
+    return episode 
+  end    
+  
+  
+  
+# -------------------------------------------------------------------------------   
+# ---- Speichern einer Staffel von einer Serie
+# -------------------------------------------------------------------------------    
+  def add_season(show, season_hash)
+    season_number = Integer(season_hash['no'], 10)
+    season = Season.new
+    season.attributes = {show_id: show.id, number: season_number}
+    season.save
+    
+    logger.debug {"[DEBUG] #{show.title}: Staffel #{season_number} in die Datenbank geschrieben"}
+    return season   
+  end  
+  
+  
+  
 # -------------------------------------------------------------------------------   
 # ---- Lastepisode wird um 1 erhöht
 # -------------------------------------------------------------------------------      

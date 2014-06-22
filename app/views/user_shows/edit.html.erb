@@ -1,11 +1,5 @@
 <div class="row">
-  <div class="medium-10 medium-centered columns">
-    <h1>Edit a series entry</h1>
-  </div>
-</div>
-	
-<div class="row">
-  <div class="medium-10 medium-centered columns">
+  <div class="medium-8 medium-centered columns">
     <%= form_for ([current_user, @user_show]) do |form| %>
         
         <%= form.label "Last episode watched" %>
@@ -20,7 +14,7 @@
         <%= form.label 'Link to series stream/download' %>
         <%= form.text_field :link %>
 
-        <%= form.submit :class => 'button tiny'  %>
+        <%= form.submit 'Update show', :class => 'button tiny'  %>
 
     <% end %>
   </div>

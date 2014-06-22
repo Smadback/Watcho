@@ -6,6 +6,8 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @title = "Registration"
+    @subtitle = "be a part of us"
   end
 
   def create
@@ -19,7 +21,8 @@ class UsersController < ApplicationController
   end
 
   def edit
-
+    @title = "User profile"
+    @subtitle = "this is who you are"
   end
 
   def update
